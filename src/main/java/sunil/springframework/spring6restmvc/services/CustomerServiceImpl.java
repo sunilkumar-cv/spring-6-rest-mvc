@@ -80,4 +80,9 @@ public class CustomerServiceImpl implements CustomerService {
         existingCustomer.setUpdatedDate(LocalDateTime.now());
         customerMap.put(customerId, existingCustomer);
     }
+
+    @Override
+    public void deleteCustomerById(UUID customerId) {
+        customerMap.remove(customerId);
+    }
 }
