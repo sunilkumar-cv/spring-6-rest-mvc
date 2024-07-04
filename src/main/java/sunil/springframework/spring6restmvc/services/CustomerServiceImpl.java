@@ -2,6 +2,7 @@ package sunil.springframework.spring6restmvc.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import sunil.springframework.spring6restmvc.model.Beer;
 import sunil.springframework.spring6restmvc.model.Customer;
 
@@ -84,5 +85,17 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteCustomerById(UUID customerId) {
         customerMap.remove(customerId);
+    }
+
+    @Override
+    public void patchCustomerById(UUID customerId, Customer customer) {
+        Customer existingCustomer = customerMap.get(customerId);
+        if(StringUtils.hasText(customer.getName())) {
+            existingCustomer.setName(customer.getName());
+        }
+
+        if(customer.getVersion() != null) {
+            existingCustomer.setVersion(customer.getVersion());
+        }
     }
 }
