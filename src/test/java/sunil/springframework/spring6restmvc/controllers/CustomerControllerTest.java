@@ -20,8 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CustomerController.class)
@@ -80,7 +80,7 @@ class CustomerControllerTest {
                 .createdDate(LocalDateTime.now())
                 .updatedDate(LocalDateTime.now())
                 .build();*/
-        customerServiceImpl.getAllCustomers().stream().forEach(c -> System.out.println(c));
+        customerServiceImpl.getAllCustomers().forEach(System.out :: println);
         System.out.println();
         customer.setId(null);
         customer.setVersion(null);
@@ -95,7 +95,20 @@ class CustomerControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
 
-        customerServiceImpl.getAllCustomers().stream().forEach(c -> System.out.println(c));
+        customerServiceImpl.getAllCustomers().forEach(System.out :: println);
 
+    }
+
+    @Test
+    void testUpdateCustomer() throws Exception {
+        Customer customer = customerServiceImpl.getAllCustomers().getFirst();
+
+        mockMvc.perform(put("/api/v1/customer/" + customer.getId())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(customer)))
+                .andExpect(status().isNoContent());
+
+        verify(customerService).updateCustomerById(any(UUID.class), any(Customer.class));
     }
 }
