@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import sunil.springframework.spring6restmvc.entities.Beer;
 import sunil.springframework.spring6restmvc.model.BeerDTO;
 import sunil.springframework.spring6restmvc.repositories.BeerRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,4 +41,18 @@ class BeerControllerIntegTest {
         assertThat(dtos.size()).isEqualTo(0);
     }
 
+    @Test
+    void testGetBeerById() {
+        Beer beer = beerRepository.findAll().getFirst();
+        BeerDTO dto = beerController.getBeerById(beer.getId());
+
+        assertThat(dto).isNotNull();
+    }
+
+    @Test
+    void testBeerIdNotFound() {
+        assertThrows(NotFoundException.class, () -> {
+            beerController.getBeerById(UUID.randomUUID());
+        });
+    }
 }
