@@ -2,7 +2,6 @@ package sunil.springframework.spring6restmvc.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Collate;
 import org.hibernate.annotations.GenericGenerator;
 import sunil.springframework.spring6restmvc.model.BeerStyle;
 
@@ -13,6 +12,7 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
