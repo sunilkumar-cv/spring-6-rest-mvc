@@ -3,6 +3,7 @@ package sunil.springframework.spring6restmvc.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sunil.springframework.spring6restmvc.mappers.BeerMapper;
 import sunil.springframework.spring6restmvc.model.BeerDTO;
 import sunil.springframework.spring6restmvc.repositories.BeerRepository;
@@ -10,6 +11,7 @@ import sunil.springframework.spring6restmvc.repositories.BeerRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,15 +41,24 @@ public class BeerServiceJPA implements BeerService {
         return beerMapper.beerToBeerDTO(beerRepository.save(beerMapper.beerDtoToBeer(beer)));
     }
 
+    @Transactional
     @Override
-    public void updateBeerById(UUID id, BeerDTO beer) {
-        beerRepository.findById(id).ifPresent(foundBeer -> {
+    public Optional<BeerDTO> updateBeerById(UUID id, BeerDTO beer) {
+
+        AtomicReference<Optional<BeerDTO>> atomicReference  = new AtomicReference<>();
+        beerRepository.findById(id).ifPresentOrElse(foundBeer -> {
             foundBeer.setBeerName(beer.getBeerName());
             foundBeer.setBeerStyle(beer.getBeerStyle());
             foundBeer.setUpc(beer.getUpc());
             foundBeer.setPrice(beer.getPrice());
             beerRepository.save(foundBeer);
+            atomicReference.set(Optional.of(beerMapper
+                    .beerToBeerDTO(beerRepository.save(foundBeer))));
+        }, () -> {
+            atomicReference.set(Optional.empty());
         });
+
+        return atomicReference.get();
     }
 
     @Override
