@@ -123,4 +123,28 @@ class BeerControllerIntegTest {
             beerController.deleteById(UUID.randomUUID());
         });
     }
+
+    @Rollback
+    @Transactional
+    @Test
+    void patchExistingBeerTest() {
+        Beer beer = beerRepository.findAll().getFirst();
+        BeerDTO beerDTO = beerMapper.beerToBeerDTO(beer);
+        beerDTO.setId(null);
+        beerDTO.setVersion(null);
+        final String beerName = "UPDATED Beer";
+        beerDTO.setBeerName(beerName);
+
+        ResponseEntity responseEntity = beerController.updateBeerPatchById(beer.getId(), beerDTO);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+        Beer updatedBeer = beerRepository.findById(beer.getId()).get();
+        assertThat(updatedBeer.getBeerName()).isEqualTo(beerName);
+    }
+
+    @Test
+    void testPatchBeerNotFound() {
+        assertThrows(NotFoundException.class, () -> {
+            beerController.updateBeerPatchById(UUID.randomUUID(), BeerDTO.builder().build());
+        });
+    }
 }

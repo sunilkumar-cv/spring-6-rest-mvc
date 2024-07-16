@@ -143,6 +143,8 @@ class BeerControllerTest {
     void testPatchBeer() throws Exception {
         BeerDTO beer = beerServiceImpl.listBeers().getFirst();
 
+        given(beerService.patchBeerById(any(), any())).willReturn(Optional.of(beer));
+
         Map<String, Object> beerMap = new HashMap<>();
         beerMap.put("beerName", "New Name");
 
