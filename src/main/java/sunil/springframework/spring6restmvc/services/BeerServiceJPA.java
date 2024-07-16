@@ -3,7 +3,6 @@ package sunil.springframework.spring6restmvc.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import sunil.springframework.spring6restmvc.mappers.BeerMapper;
 import sunil.springframework.spring6restmvc.model.BeerDTO;
 import sunil.springframework.spring6restmvc.repositories.BeerRepository;
@@ -62,8 +61,12 @@ public class BeerServiceJPA implements BeerService {
     }
 
     @Override
-    public void deleteBeerById(UUID beerId) {
-        beerRepository.deleteById(beerId);
+    public Boolean deleteBeerById(UUID beerId) {
+        if(beerRepository.existsById(beerId)) {
+            beerRepository.deleteById(beerId);
+            return true;
+        }
+        return false;
     }
 
     @Override

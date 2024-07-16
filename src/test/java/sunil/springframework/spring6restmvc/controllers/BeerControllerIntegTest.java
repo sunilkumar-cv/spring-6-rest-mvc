@@ -116,4 +116,11 @@ class BeerControllerIntegTest {
         //Beer foundBeer = beerRepository.findById(beer.getId()).get();
         //assertThat(foundBeer).isNull();
     }
+
+    @Test
+    void testDeleteBeerByIdNotFound() {
+        assertThrows(NotFoundException.class, () -> {
+            beerController.deleteById(UUID.randomUUID());
+        });
+    }
 }
