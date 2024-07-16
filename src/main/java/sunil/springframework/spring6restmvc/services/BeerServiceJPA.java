@@ -41,7 +41,7 @@ public class BeerServiceJPA implements BeerService {
         return beerMapper.beerToBeerDTO(beerRepository.save(beerMapper.beerDtoToBeer(beer)));
     }
 
-    @Transactional
+    //@Transactional
     @Override
     public Optional<BeerDTO> updateBeerById(UUID id, BeerDTO beer) {
 
@@ -63,7 +63,7 @@ public class BeerServiceJPA implements BeerService {
 
     @Override
     public void deleteBeerById(UUID beerId) {
-
+        beerRepository.deleteById(beerId);
     }
 
     @Override
