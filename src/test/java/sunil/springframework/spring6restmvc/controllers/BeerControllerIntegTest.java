@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -17,6 +18,7 @@ import sunil.springframework.spring6restmvc.entities.Beer;
 import sunil.springframework.spring6restmvc.mappers.BeerMapper;
 import sunil.springframework.spring6restmvc.model.BeerDTO;
 import sunil.springframework.spring6restmvc.repositories.BeerRepository;
+import static org.hamcrest.core.Is.is;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -178,10 +181,14 @@ class BeerControllerIntegTest {
         Map<String, Object> beerMap = new HashMap<>();
         beerMap.put("beerName", "New Beer 123456789123456789123456789123456789123456789123456789123456789123456789123456789");
 
-        mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
+        MvcResult result = mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerMap)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(1)))
+                .andReturn();
+
+        System.out.println(result.getResponse().getContentAsString());
     }
 }
