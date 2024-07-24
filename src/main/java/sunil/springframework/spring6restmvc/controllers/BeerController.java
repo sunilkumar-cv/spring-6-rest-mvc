@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sunil.springframework.spring6restmvc.model.BeerDTO;
+import sunil.springframework.spring6restmvc.model.BeerStyle;
 import sunil.springframework.spring6restmvc.services.BeerService;
 
 import java.util.List;
@@ -62,8 +63,9 @@ public class BeerController {
 
     //@RequestMapping(method = RequestMethod.GET, value = BEER_PATH)
     @GetMapping(BEER_PATH)
-    public List<BeerDTO> listBeers(@RequestParam(required = false) String beerName) {
-        return beerService.listBeers(beerName);
+    public List<BeerDTO> listBeers(@RequestParam(required = false) String beerName,
+                                   @RequestParam(required = false) BeerStyle beerStyle) {
+        return beerService.listBeers(beerName, beerStyle);
     }
 
     //@RequestMapping(value = BEER_PATH_ID, method = RequestMethod.GET)
